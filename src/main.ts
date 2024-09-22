@@ -14,18 +14,15 @@ function statement(invoice: Invoice, plays: Plays) {
   ).format
 
   for (let perf of invoice.performances){
-    let play = plays[perf.playID]
-    let thisAmount = amountFor(perf.audience, play.type)
-
     // Soma créditos por volume
     volumeCredits += Math.max(perf.audience - 30, 0)
 
     // Soma um crédito extra para cada cinco espectadores de comédia
-    if (play.type === "comedy")
+    if (playFor(perf).type === "comedy")
       volumeCredits += Math.floor(perf.audience / 5)
 
-    result += ` ${play.name}: ${format(thisAmount/100)} (${perf.audience} seats)\n`;
-    totalAmount += thisAmount;
+    result += ` ${playFor(perf).name}: ${format(amountFor(perf)/100)} (${perf.audience} seats)\n`;
+    totalAmount += amountFor(perf);
   }
 
   result += `Amount owed is ${format(totalAmount/100)}\n`;
@@ -33,24 +30,28 @@ function statement(invoice: Invoice, plays: Plays) {
   return result;
 }
 
-function amountFor(audience: number, playType: "tragedy" | "comedy") {
+function amountFor(perf: Performance) {
   let thisAmount = 0;
 
-  switch (playType) {
+  switch (playFor(perf).type) {
     case "tragedy":
       thisAmount = 40000
-      if (audience > 30) 
-        thisAmount += 1000 * (audience - 30)
+      if (perf.audience > 30) 
+        thisAmount += 1000 * (perf.audience - 30)
       break;
     case "comedy":
       thisAmount = 30000
-      if (audience > 20) 
-        thisAmount += 10000 + 500 * (audience - 20)
-      thisAmount += 300 * audience
+      if (perf.audience > 20) 
+        thisAmount += 10000 + 500 * (perf.audience - 20)
+      thisAmount += 300 * perf.audience
       break;
     default:
       return 0;
   }
 
   return thisAmount
+}
+
+function playFor(per: Performance) {
+  return plays[per.playID];
 }
