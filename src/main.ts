@@ -1,22 +1,19 @@
-import { Play, Plays, plays } from "./data/plays"
-import { Invoice, invoices, Performance } from "./data/invoices"
+import { Invoice, invoices, Performance } from "./data/invoices";
+import { plays } from "./data/plays";
 
-console.log(statement(invoices, plays))
+console.log(statement(invoices))
 
-function statement(invoice: Invoice, plays: Plays) {
+function statement(invoice: Invoice) {
   let totalAmount = 0;
-  let volumeCredits = 0;
   let result = `Statement for ${invoice.customer}\n`;
 
   for (let perf of invoice.performances){
-    volumeCredits = volumeCredtisFor(perf)
-
     result += ` ${playFor(perf).name}: ${formatToUSD(amountFor(perf))} (${perf.audience} seats)\n`;
     totalAmount += amountFor(perf);
   }
 
   result += `Amount owed is ${formatToUSD(totalAmount)}\n`;
-  result += `You earned ${volumeCredits} credits\n`;
+  result += `You earned ${totalVolumeCredits()} credits\n`;
   return result;
 }
 
@@ -59,4 +56,13 @@ function formatToUSD(amount: number) {
     "en-US", 
     { style: "currency", currency: "USD", minimumFractionDigits: 2 }
   ).format(amount)
+}
+
+function totalVolumeCredits() {
+  let volumeCredits = 0;
+  for (let perf of invoices.performances) {
+    volumeCredits = volumeCredtisFor(perf)
+  }
+
+  return volumeCredits
 }
