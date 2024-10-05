@@ -5,12 +5,10 @@ console.log(statement(invoices))
 
 function statement(invoice: Invoice) {
   let result = `Statement for ${invoice.customer}\n`;
-
   for (let perf of invoice.performances){
     result += ` ${playFor(perf).name}: ${formatToUSD(amountFor(perf))} (${perf.audience} seats)\n`;
   }
-
-  result += `Amount owed is ${formatToUSD(calculateTotalAmount())}\n`;
+  result += `Amount owed is ${formatToUSD(totalAmount())}\n`;
   result += `You earned ${totalVolumeCredits()} credits\n`;
   return result;
 }
@@ -65,7 +63,7 @@ function totalVolumeCredits() {
   return volumeCredits
 }
 
-function calculateTotalAmount() {
+function totalAmount() {
   let totalAmount = 0;
   for (let perf of invoices.performances){
     totalAmount += amountFor(perf);
